@@ -162,6 +162,7 @@ const miniGameResult=document.getElementById("mini-game-result");
 const resultTitle=document.getElementById("result-title");
 const resultMessage=document.getElementById("result-message");
 const resultTickets=document.getElementById("result-tickets");
+const acceptGameReward=document.getElementById("accept-game-reward");
 let miniGameSession=0;
 let resultReturnTimer=null;
 
@@ -170,6 +171,7 @@ document.querySelectorAll(".game-select").forEach(button=>{
 });
 const closeMiniGameButton=document.getElementById("close-mini-game");
 if(closeMiniGameButton)closeMiniGameButton.addEventListener("click",closeMiniGame);
+if(acceptGameReward)acceptGameReward.addEventListener("click",closeMiniGame);
 
 function openMiniGame(game){
   miniGameSession++;
@@ -208,10 +210,6 @@ function showGameResult(title,message,earned){
   resultMessage.textContent=message;
   resultTickets.textContent=earned;
   miniGameResult.hidden=false;
-  resultReturnTimer=setTimeout(()=>{
-    if(session!==miniGameSession)return;
-    closeMiniGame();
-  },2200);
 }
 function stopMemoryGame(){if(memoryTimer)clearTimeout(memoryTimer);memoryTimer=null;memoryLocked=true;memoryFirst=null;}
 
