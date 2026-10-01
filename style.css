@@ -229,6 +229,11 @@ p { color:var(--muted); line-height:1.55; font-size:14px; }
   align-items:center;
   justify-content:center;
 }
+.memory-game {
+  display:grid;
+  align-content:center;
+  justify-content:center;
+}
 .memory-game { padding:70px 24px 34px; }
 .reaction-game { padding:76px 24px 30px; flex-direction:column; }
 .match3-game { padding:76px 24px 30px; flex-direction:column; }
