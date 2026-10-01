@@ -147,12 +147,21 @@ p { color:var(--muted); line-height:1.55; font-size:14px; }
 .memory-card.flipped,.memory-card.matched { background:#304735; border-color:var(--green); }
 .memory-hud { text-align:center; color:var(--muted); margin-top:8px; }
 
-.reaction-game { max-width:600px; margin:40px auto; text-align:center; }
-.reaction-status { min-height:28px; color:var(--muted); }
-.reaction-action { width:220px; height:220px; margin:25px auto; border-radius:50%; border:2px solid #47604c; background:#26382b; font-size:25px; font-weight:900; }
-.reaction-action.ready { background:#8b3f34; border-color:#d97a68; }
-.reaction-action.go { background:#3c8d52; border-color:#75c48a; }
-.reaction-hud { display:flex; justify-content:center; gap:40px; color:var(--muted); font-size:12px; }
+.reaction-game { max-width:600px; margin:28px auto; text-align:center; }
+.reaction-status { min-height:28px; color:var(--muted); margin-bottom:12px; }
+.reaction-action { min-width:170px; margin:18px auto 0; border:1px solid #47604c; background:#26382b; border-radius:10px; padding:12px 22px; font-size:15px; font-weight:900; }
+.reaction-action:hover { background:#304835; border-color:var(--green); }
+.reaction-hud { display:flex; justify-content:center; gap:40px; color:var(--muted); font-size:12px; margin-bottom:14px; }
+.mole-board { width:min(430px,100%); margin:0 auto; display:grid; grid-template-columns:repeat(3,1fr); gap:10px; padding:14px; border:1px solid #35463a; border-radius:16px; background:linear-gradient(180deg,#1c2920,#142018); }
+.mole-hole { aspect-ratio:1.15; border:1px solid #405446; border-radius:14px; background:radial-gradient(circle at 50% 65%,#0d130f 0 28%,#25372a 30% 48%,#18251d 50%); font-size:30px; transition:transform .12s,border-color .12s,background .12s; }
+.mole-hole.active { border-color:var(--gold); background:radial-gradient(circle at 50% 50%,rgba(232,198,107,.22),#304735 55%,#1a271e); transform:scale(.96); box-shadow:0 0 0 2px rgba(232,198,107,.18); }
+.mole-hole.active:hover { transform:scale(1); }
+
+.mini-game-result { min-height:390px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:30px; }
+.result-icon { font-size:54px; margin:12px 0; }
+.result-reward { margin:12px 0 4px; padding:14px 24px; border:1px solid #5b6d46; border-radius:12px; background:rgba(117,196,138,.08); color:var(--green); font-size:15px; }
+.result-reward strong { font-size:30px; margin:0 4px; }
+.result-return { font-size:12px; }
 
 .match3-game { width:min(430px,100%); margin:20px auto; }
 .match3-hud { display:flex; justify-content:space-between; margin-bottom:12px; color:var(--muted); }
