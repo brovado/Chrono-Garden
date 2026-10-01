@@ -125,13 +125,23 @@
 
         <div id="memory-game" class="game-board" hidden></div>
         <div id="reaction-game" class="reaction-game" hidden>
-          <div class="reaction-status" id="reaction-status">Press Start when you're ready.</div>
-          <button id="reaction-action" class="reaction-action">START</button>
+          <div class="reaction-status" id="reaction-status">Whack the glowing garden critter!</div>
           <div class="reaction-hud">
-            <span>ROUND <b id="reaction-round">0 / 10</b></span>
-            <span>BEST <b id="reaction-best">—</b></span>
+            <span>ROUND <b id="reaction-round">0 / 15</b></span>
+            <span>HITS <b id="reaction-best">0</b></span>
           </div>
+          <div id="mole-board" class="mole-board" aria-label="Whack a mole board"></div>
+          <button id="reaction-action" class="reaction-action">START</button>
         </div>
+        <div id="mini-game-result" class="mini-game-result" hidden>
+          <span class="eyebrow">GAME COMPLETE</span>
+          <div class="result-icon">🎟️</div>
+          <h2 id="result-title">Well played.</h2>
+          <p id="result-message">You earned Tickets.</p>
+          <div class="result-reward">+<strong id="result-tickets">0</strong> Tickets</div>
+          <p class="result-return">Returning to the game board…</p>
+        </div>
+
         <div id="match3-game" class="match3-game" hidden>
           <div class="match3-hud">
             <span>TIME <b id="match3-time">60</b></span>
