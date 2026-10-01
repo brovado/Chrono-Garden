@@ -14,7 +14,6 @@
 }
 
 * { box-sizing: border-box; }
-
 body {
   margin: 0;
   min-height: 100vh;
@@ -25,324 +24,102 @@ body {
   color: var(--text);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
+button { font: inherit; color: inherit; cursor: pointer; }
+.game-shell { width: min(1400px, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 60px; }
+.topbar { display:flex; align-items:end; justify-content:space-between; gap:24px; margin-bottom:18px; }
+.eyebrow { display:block; color:var(--green); font-size:11px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; }
+h1,h2,h3,p { margin-top:0; }
+h1 { margin-bottom:0; font-size:clamp(32px,5vw,54px); letter-spacing:-.04em; }
+h2 { margin-bottom:8px; font-size:22px; letter-spacing:-.02em; }
+h3 { margin:7px 0; font-size:22px; }
+p { color:var(--muted); line-height:1.55; font-size:14px; }
 
-button {
-  font: inherit;
-  color: inherit;
-  cursor: pointer;
+.resources { display:flex; gap:10px; }
+.resource { min-width:130px; padding:12px 15px; background:rgba(29,41,32,.72); border:1px solid var(--line); border-radius:12px; }
+.resource-label { display:block; color:var(--muted); font-size:10px; letter-spacing:.12em; margin-bottom:4px; }
+.resource strong { font-size:15px; }
+
+.main-nav { display:flex; gap:8px; margin-bottom:20px; }
+.nav-button { border:1px solid var(--line); background:#18231b; border-radius:10px; padding:10px 16px; font-weight:700; }
+.nav-button:hover,.nav-button.active { background:#29402f; border-color:#55775d; }
+
+.screen { display:none; }
+.screen.active { display:block; }
+
+.game-layout { display:grid; grid-template-columns:minmax(0,1.7fr) minmax(310px,.8fr); gap:20px; }
+.garden-panel,.card,.mini-game-card,.active-mini-game { background:rgba(23,32,25,.9); border:1px solid var(--line); border-radius:18px; box-shadow:var(--shadow); }
+.garden-panel { padding:22px; }
+.section-heading,.active-game-header { display:flex; justify-content:space-between; align-items:end; margin-bottom:20px; }
+.status { color:var(--muted); font-size:12px; border:1px solid var(--line); border-radius:999px; padding:6px 10px; }
+
+.garden { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+.plot { min-height:210px; position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:space-between; padding:16px; border:1px solid #344438; border-radius:14px; background:radial-gradient(circle at 50% 100%,rgba(79,119,67,.3),transparent 45%),linear-gradient(145deg,#233127,#17221b); }
+.plot.empty { align-items:center; justify-content:center; color:var(--muted); border-style:dashed; }
+.plot.empty button { margin-top:10px; padding:8px 13px; border:1px solid var(--line); border-radius:8px; background:#202c24; }
+.plant-icon { font-size:68px; line-height:1; text-align:center; padding:18px 0; filter:drop-shadow(0 8px 10px rgba(0,0,0,.2)); }
+.plant-name { font-weight:800; font-size:17px; }
+.plant-age { color:var(--muted); font-size:12px; margin-top:3px; }
+.mutation { display:inline-block; margin-top:8px; padding:4px 7px; border-radius:6px; background:rgba(117,196,138,.12); color:var(--green); font-size:11px; }
+.growth { height:5px; margin-top:10px; background:#101611; border-radius:99px; overflow:hidden; }
+.growth span { display:block; height:100%; background:var(--green); transition:width .3s ease; }
+
+.side-panel { display:flex; flex-direction:column; gap:14px; }
+.card { padding:18px; }
+.deposit-options { display:grid; gap:8px; margin-top:15px; }
+.deposit-options button,.primary,.secondary { border:1px solid #47604c; background:#26382b; border-radius:10px; padding:11px 13px; text-align:center; transition:transform .15s,background .15s,border-color .15s; }
+.deposit-options button { text-align:left; }
+.deposit-options button:hover,.primary:hover,.secondary:hover { transform:translateY(-1px); background:#304835; border-color:var(--green); }
+.deposit-options small { float:right; color:var(--muted); }
+.primary { background:var(--green-dark); border-color:#4e9a64; font-weight:800; }
+.secondary { background:#202c24; }
+
+.almanac { display:grid; gap:7px; margin-top:12px; }
+.almanac-row { display:flex; justify-content:space-between; padding:8px 10px; border-radius:8px; background:#202b23; font-size:12px; }
+.almanac-row span:last-child { color:var(--muted); }
+
+.screen-heading { margin-bottom:20px; }
+.mini-game-selection { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+.mini-game-card { padding:22px; min-height:300px; display:flex; flex-direction:column; }
+.mini-game-card.locked { border-color:#4a4632; }
+.game-icon { font-size:50px; margin-bottom:18px; }
+.game-meta { display:flex; justify-content:space-between; gap:8px; margin-top:auto; margin-bottom:14px; color:var(--muted); font-size:12px; }
+.game-meta span:first-child { color:var(--gold); }
+
+.active-mini-game { margin-top:18px; padding:22px; min-height:460px; }
+.active-game-header { align-items:center; }
+.game-board { width:min(420px,100%); margin:30px auto; display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+.memory-card { aspect-ratio:1; border:1px solid #49614f; border-radius:12px; background:#223128; font-size:34px; }
+.memory-card.flipped,.memory-card.matched { background:#304735; border-color:var(--green); }
+.memory-hud { text-align:center; color:var(--muted); margin-top:8px; }
+
+.reaction-game { max-width:600px; margin:40px auto; text-align:center; }
+.reaction-status { min-height:28px; color:var(--muted); }
+.reaction-action { width:220px; height:220px; margin:25px auto; border-radius:50%; border:2px solid #47604c; background:#26382b; font-size:25px; font-weight:900; }
+.reaction-action.ready { background:#8b3f34; border-color:#d97a68; }
+.reaction-action.go { background:#3c8d52; border-color:#75c48a; }
+.reaction-hud { display:flex; justify-content:center; gap:40px; color:var(--muted); font-size:12px; }
+
+.match3-game { width:min(430px,100%); margin:20px auto; }
+.match3-hud { display:flex; justify-content:space-between; margin-bottom:12px; color:var(--muted); }
+.match3-board { display:grid; grid-template-columns:repeat(6,1fr); gap:5px; }
+.match3-tile { aspect-ratio:1; border:1px solid #405446; border-radius:8px; background:#26382b; font-size:26px; }
+.match3-tile.selected { outline:2px solid var(--gold); transform:scale(.94); }
+.game-hint { text-align:center; margin-top:12px; }
+
+.toast-container { position:fixed; right:20px; bottom:20px; display:grid; gap:8px; z-index:10; }
+.toast { max-width:330px; padding:12px 15px; background:#26382b; border:1px solid #55745c; border-radius:10px; box-shadow:var(--shadow); animation:toast-in .2s ease-out; }
+@keyframes toast-in { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+@media (max-width:900px) {
+  .game-layout { grid-template-columns:1fr; }
+  .garden { grid-template-columns:repeat(2,1fr); }
+  .mini-game-selection { grid-template-columns:1fr; }
 }
-
-.game-shell {
-  width: min(1400px, calc(100% - 32px));
-  margin: 0 auto;
-  padding: 28px 0 60px;
-}
-
-.topbar {
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: 24px;
-  margin-bottom: 24px;
-}
-
-.eyebrow {
-  display: block;
-  color: var(--green);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: .16em;
-  text-transform: uppercase;
-}
-
-h1, h2, p { margin-top: 0; }
-h1 { margin-bottom: 0; font-size: clamp(32px, 5vw, 54px); letter-spacing: -.04em; }
-h2 { margin-bottom: 8px; font-size: 22px; letter-spacing: -.02em; }
-p { color: var(--muted); line-height: 1.55; font-size: 14px; }
-
-.resources {
-  display: flex;
-  gap: 10px;
-}
-
-.resource {
-  min-width: 150px;
-  padding: 12px 15px;
-  background: rgba(29,41,32,.72);
-  border: 1px solid var(--line);
-  border-radius: 12px;
-}
-
-.resource-label {
-  display: block;
-  color: var(--muted);
-  font-size: 10px;
-  letter-spacing: .12em;
-  margin-bottom: 4px;
-}
-
-.resource strong { font-size: 15px; }
-
-.game-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1.7fr) minmax(310px, .8fr);
-  gap: 20px;
-}
-
-.garden-panel, .card {
-  background: rgba(23,32,25,.9);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  box-shadow: var(--shadow);
-}
-
-.garden-panel { padding: 22px; }
-
-.section-heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: end;
-  margin-bottom: 20px;
-}
-
-.status {
-  color: var(--muted);
-  font-size: 12px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 6px 10px;
-}
-
-.garden {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-}
-
-.plot {
-  min-height: 210px;
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 16px;
-  border: 1px solid #344438;
-  border-radius: 14px;
-  background:
-    radial-gradient(circle at 50% 100%, rgba(79,119,67,.3), transparent 45%),
-    linear-gradient(145deg, #233127, #17221b);
-}
-
-.plot.empty {
-  align-items: center;
-  justify-content: center;
-  color: var(--muted);
-  border-style: dashed;
-}
-
-.plot.empty button {
-  margin-top: 10px;
-  padding: 8px 13px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: #202c24;
-}
-
-.plant-icon {
-  font-size: 68px;
-  line-height: 1;
-  text-align: center;
-  padding: 18px 0;
-  filter: drop-shadow(0 8px 10px rgba(0,0,0,.2));
-}
-
-.plant-name {
-  font-weight: 800;
-  font-size: 17px;
-}
-
-.plant-age {
-  color: var(--muted);
-  font-size: 12px;
-  margin-top: 3px;
-}
-
-.mutation {
-  display: inline-block;
-  margin-top: 8px;
-  padding: 4px 7px;
-  border-radius: 6px;
-  background: rgba(117,196,138,.12);
-  color: var(--green);
-  font-size: 11px;
-}
-
-.growth {
-  height: 5px;
-  margin-top: 10px;
-  background: #101611;
-  border-radius: 99px;
-  overflow: hidden;
-}
-
-.growth span {
-  display: block;
-  height: 100%;
-  background: var(--green);
-  transition: width .3s ease;
-}
-
-.side-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.card { padding: 18px; }
-
-.deposit-options {
-  display: grid;
-  gap: 8px;
-  margin-top: 15px;
-}
-
-.deposit-options button, .primary {
-  border: 1px solid #47604c;
-  background: #26382b;
-  border-radius: 10px;
-  padding: 11px 13px;
-  text-align: left;
-  transition: transform .15s, background .15s, border-color .15s;
-}
-
-.deposit-options button:hover, .primary:hover {
-  transform: translateY(-1px);
-  background: #304835;
-  border-color: var(--green);
-}
-
-.deposit-options small {
-  float: right;
-  color: var(--muted);
-}
-
-.primary {
-  background: var(--green-dark);
-  border-color: #4e9a64;
-  text-align: center;
-  font-weight: 800;
-}
-
-.mini-game-area {
-  height: 190px;
-  position: relative;
-  overflow: hidden;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: radial-gradient(circle, #293c2d, #111812 70%);
-}
-
-.mini-game-idle {
-  height: 100%;
-  display: grid;
-  place-items: center;
-  align-content: center;
-  gap: 10px;
-}
-
-.firefly-symbol { color: var(--gold); font-size: 44px; }
-
-.firefly {
-  position: absolute;
-  width: 44px;
-  height: 44px;
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--gold);
-  font-size: 31px;
-  text-shadow: 0 0 18px var(--gold);
-  animation: pulse 1s infinite alternate;
-}
-
-@keyframes pulse {
-  from { transform: scale(.85); }
-  to { transform: scale(1.15); }
-}
-
-.mini-game-hud {
-  position: absolute;
-  top: 9px;
-  left: 10px;
-  right: 10px;
-  display: flex;
-  justify-content: space-between;
-  color: var(--muted);
-  font-size: 10px;
-  letter-spacing: .1em;
-}
-
-.mini-game-hud b { color: var(--text); }
-
-.mini-result {
-  min-height: 20px;
-  padding-top: 10px;
-  color: var(--gold);
-  font-size: 13px;
-  text-align: center;
-}
-
-.almanac {
-  display: grid;
-  gap: 7px;
-  margin-top: 12px;
-}
-
-.almanac-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 10px;
-  border-radius: 8px;
-  background: #202b23;
-  font-size: 12px;
-}
-
-.almanac-row span:last-child { color: var(--muted); }
-
-.toast-container {
-  position: fixed;
-  right: 20px;
-  bottom: 20px;
-  display: grid;
-  gap: 8px;
-  z-index: 10;
-}
-
-.toast {
-  max-width: 330px;
-  padding: 12px 15px;
-  background: #26382b;
-  border: 1px solid #55745c;
-  border-radius: 10px;
-  box-shadow: var(--shadow);
-  animation: toast-in .2s ease-out;
-}
-
-@keyframes toast-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@media (max-width: 900px) {
-  .game-layout { grid-template-columns: 1fr; }
-  .garden { grid-template-columns: repeat(2, 1fr); }
-}
-
-@media (max-width: 600px) {
-  .game-shell { width: min(100% - 20px, 600px); padding-top: 16px; }
-  .topbar { align-items: stretch; flex-direction: column; }
-  .resources { display: grid; grid-template-columns: 1fr 1fr; }
-  .resource { min-width: 0; }
-  .garden { grid-template-columns: 1fr; }
+@media (max-width:600px) {
+  .game-shell { width:min(100% - 20px,600px); padding-top:16px; }
+  .topbar { align-items:stretch; flex-direction:column; }
+  .resources { display:grid; grid-template-columns:repeat(3,1fr); }
+  .resource { min-width:0; }
+  .garden { grid-template-columns:1fr; }
+  .game-board { gap:6px; }
 }
