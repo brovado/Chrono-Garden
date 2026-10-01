@@ -11,7 +11,7 @@
     <header class="topbar">
       <div>
         <div class="eyebrow">CHRONO-GARDEN</div>
-        <h1>The Garden</h1>
+        <h1 id="screen-title">The Garden</h1>
       </div>
       <div class="resources">
         <div class="resource">
@@ -22,56 +22,117 @@
           <span class="resource-label">TICKETS</span>
           <strong id="tickets">100</strong>
         </div>
+        <div class="resource">
+          <span class="resource-label">GOLD</span>
+          <strong id="gold">500</strong>
+        </div>
       </div>
     </header>
 
-    <section class="game-layout">
-      <div class="garden-panel">
-        <div class="section-heading">
-          <div>
-            <span class="eyebrow">YOUR GARDEN</span>
-            <h2>Something might happen.</h2>
+    <nav class="main-nav">
+      <button class="nav-button active" data-screen="garden-screen">🌱 Garden</button>
+      <button class="nav-button" data-screen="mini-games-screen">🎮 Mini Games</button>
+    </nav>
+
+    <section id="garden-screen" class="screen active">
+      <div class="game-layout">
+        <div class="garden-panel">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">YOUR GARDEN</span>
+              <h2>Something might happen.</h2>
+            </div>
+            <span id="garden-status" class="status">6 plots</span>
           </div>
-          <span id="garden-status" class="status">6 plots</span>
+          <div id="garden" class="garden"></div>
         </div>
-        <div id="garden" class="garden"></div>
+
+        <aside class="side-panel">
+          <section class="card">
+            <span class="eyebrow">TIME BANK</span>
+            <h2>Advance the garden.</h2>
+            <p>Tickets become Garden Time. Your plants only grow when the garden clock moves.</p>
+            <div class="deposit-options">
+              <button data-deposit="10">+1 hour <small>10 tickets</small></button>
+              <button data-deposit="50">+6 hours <small>50 tickets</small></button>
+              <button data-deposit="100">+1 day <small>100 tickets</small></button>
+            </div>
+          </section>
+
+          <section class="card">
+            <span class="eyebrow">ALMANAC</span>
+            <div id="almanac" class="almanac"></div>
+          </section>
+        </aside>
+      </div>
+    </section>
+
+    <section id="mini-games-screen" class="screen">
+      <div class="screen-heading">
+        <div>
+          <span class="eyebrow">MINI-GAMES</span>
+          <h2>Play. Earn Tickets. Return to the garden.</h2>
+          <p>Every mini-game is a different way to actively generate Tickets.</p>
+        </div>
       </div>
 
-      <aside class="side-panel">
-        <section class="card">
-          <span class="eyebrow">TIME BANK</span>
-          <h2>Advance the garden.</h2>
-          <p>Tickets become Garden Time. Your plants only grow when the garden clock moves.</p>
-          <div class="deposit-options">
-            <button data-deposit="10">+1 hour <small>10 tickets</small></button>
-            <button data-deposit="50">+6 hours <small>50 tickets</small></button>
-            <button data-deposit="100">+1 day <small>100 tickets</small></button>
-          </div>
-        </section>
+      <div class="mini-game-selection">
+        <article class="mini-game-card">
+          <div class="game-icon">🧠</div>
+          <span class="eyebrow">AVAILABLE</span>
+          <h3>Memory Flip</h3>
+          <p>Find every matching pair. Faster clears and fewer flips mean more Tickets.</p>
+          <div class="game-meta"><span>Reward: Tickets</span><span>8 cards</span></div>
+          <button class="primary game-select" data-game="memory">Play Memory Flip</button>
+        </article>
 
-        <section class="card mini-game-card">
-          <span class="eyebrow">MINI-GAME</span>
-          <h2>Catch Fireflies</h2>
-          <p>Catch as many fireflies as you can before the garden closes its gate.</p>
-          <div class="mini-game-area" id="mini-game-area">
-            <div class="mini-game-idle" id="mini-game-idle">
-              <div class="firefly-symbol">✦</div>
-              <button id="start-mini-game" class="primary">Start Game</button>
-            </div>
-            <button id="firefly" class="firefly" hidden>✦</button>
-            <div id="mini-game-hud" class="mini-game-hud" hidden>
-              <span>TIME <b id="mini-time">15</b></span>
-              <span>CAUGHT <b id="mini-score">0</b></span>
-            </div>
-          </div>
-          <div id="mini-result" class="mini-result"></div>
-        </section>
+        <article class="mini-game-card">
+          <div class="game-icon">⚡</div>
+          <span class="eyebrow">AVAILABLE</span>
+          <h3>Reaction Tap</h3>
+          <p>Wait for the signal, then tap as quickly as you can. Speed is everything.</p>
+          <div class="game-meta"><span>Reward: Tickets</span><span>10 rounds</span></div>
+          <button class="primary game-select" data-game="reaction">Play Reaction Tap</button>
+        </article>
 
-        <section class="card">
-          <span class="eyebrow">ALMANAC</span>
-          <div id="almanac" class="almanac"></div>
-        </section>
-      </aside>
+        <article class="mini-game-card locked">
+          <div class="game-icon">🧩</div>
+          <span class="eyebrow">GOLD UNLOCK</span>
+          <h3>Match-3 Puzzle</h3>
+          <p>Build matches, trigger cascades, and turn a good board into a pile of Tickets.</p>
+          <div class="game-meta"><span>Unlock: 250 Gold</span><span>60 seconds</span></div>
+          <button id="match3-unlock" class="primary">Unlock for 250 Gold</button>
+          <button id="match3-play" class="primary" hidden>Play Match-3 Puzzle</button>
+        </article>
+      </div>
+
+      <section id="active-mini-game" class="active-mini-game" hidden>
+        <div class="active-game-header">
+          <div>
+            <span class="eyebrow" id="active-game-eyebrow">MINI-GAME</span>
+            <h2 id="active-game-title">Game</h2>
+          </div>
+          <button id="close-mini-game" class="secondary">← Back to Games</button>
+        </div>
+
+        <div id="memory-game" class="game-board" hidden></div>
+        <div id="reaction-game" class="reaction-game" hidden>
+          <div class="reaction-status" id="reaction-status">Press Start when you're ready.</div>
+          <button id="reaction-action" class="reaction-action">START</button>
+          <div class="reaction-hud">
+            <span>ROUND <b id="reaction-round">0 / 10</b></span>
+            <span>BEST <b id="reaction-best">—</b></span>
+          </div>
+        </div>
+        <div id="match3-game" class="match3-game" hidden>
+          <div class="match3-hud">
+            <span>TIME <b id="match3-time">60</b></span>
+            <span>SCORE <b id="match3-score">0</b></span>
+          </div>
+          <div id="match3-board" class="match3-board"></div>
+          <p class="game-hint">Swap neighboring tiles to make lines of 3 or more.</p>
+        </div>
+      </section>
     </section>
   </main>
 
