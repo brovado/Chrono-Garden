@@ -1,1 +1,81 @@
-index
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chrono-Garden</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="game-shell">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">CHRONO-GARDEN</div>
+        <h1>The Garden</h1>
+      </div>
+      <div class="resources">
+        <div class="resource">
+          <span class="resource-label">GARDEN TIME</span>
+          <strong id="garden-time">Day 1 · 00:00</strong>
+        </div>
+        <div class="resource">
+          <span class="resource-label">TICKETS</span>
+          <strong id="tickets">100</strong>
+        </div>
+      </div>
+    </header>
+
+    <section class="game-layout">
+      <div class="garden-panel">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">YOUR GARDEN</span>
+            <h2>Something might happen.</h2>
+          </div>
+          <span id="garden-status" class="status">6 plots</span>
+        </div>
+        <div id="garden" class="garden"></div>
+      </div>
+
+      <aside class="side-panel">
+        <section class="card">
+          <span class="eyebrow">TIME BANK</span>
+          <h2>Advance the garden.</h2>
+          <p>Tickets become Garden Time. Your plants only grow when the garden clock moves.</p>
+          <div class="deposit-options">
+            <button data-deposit="10">+1 hour <small>10 tickets</small></button>
+            <button data-deposit="50">+6 hours <small>50 tickets</small></button>
+            <button data-deposit="100">+1 day <small>100 tickets</small></button>
+          </div>
+        </section>
+
+        <section class="card mini-game-card">
+          <span class="eyebrow">MINI-GAME</span>
+          <h2>Catch Fireflies</h2>
+          <p>Catch as many fireflies as you can before the garden closes its gate.</p>
+          <div class="mini-game-area" id="mini-game-area">
+            <div class="mini-game-idle" id="mini-game-idle">
+              <div class="firefly-symbol">✦</div>
+              <button id="start-mini-game" class="primary">Start Game</button>
+            </div>
+            <button id="firefly" class="firefly" hidden>✦</button>
+            <div id="mini-game-hud" class="mini-game-hud" hidden>
+              <span>TIME <b id="mini-time">15</b></span>
+              <span>CAUGHT <b id="mini-score">0</b></span>
+            </div>
+          </div>
+          <div id="mini-result" class="mini-result"></div>
+        </section>
+
+        <section class="card">
+          <span class="eyebrow">ALMANAC</span>
+          <div id="almanac" class="almanac"></div>
+        </section>
+      </aside>
+    </section>
+  </main>
+
+  <div id="toast-container" class="toast-container"></div>
+  <script src="game.js"></script>
+</body>
+</html>
