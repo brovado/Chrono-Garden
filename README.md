@@ -2,7 +2,28 @@
 
 A garden sandbox where plants grow, evolve, and mutate over time.
 
+**Playable prototype:** the repository now contains the first vertical slice of the game.
+
 The player's collection becomes the engine that improves the game's mini-games, while mini-games provide Tickets that let the player accelerate Garden Time.
+
+## Play the Prototype
+
+Once GitHub Pages finishes its first deployment:
+
+**https://brovado.github.io/Chrono-Garden/**
+
+The current prototype is intentionally small:
+
+- 6 garden plots
+- 3 starter plants
+- Plant growth stages
+- Garden Time
+- Tickets
+- Ticket deposits
+- Mutation discoveries
+- Persistent browser save
+- Firefly-catching Ticket mini-game
+- Basic Almanac
 
 ## Core Loop
 
@@ -41,3 +62,9 @@ See [docs/GAME-SPEC.md](docs/GAME-SPEC.md) for the full specification.
 The garden should create curiosity rather than obligation:
 
 **"Something might happen if you give me a little more time."**
+
+## Prototype Scope
+
+This build is a proof of the core loop, not the finished game.
+
+The mutation thresholds are deliberately simple and deterministic for now so the underlying loop can be tested before adding probability, larger mutation trees, plant bonuses, more mini-games, and deeper collection content.
