@@ -29,9 +29,17 @@
       </div>
     </header>
 
-    <nav class="main-nav">
-      <button type="button" class="nav-button active" data-screen="garden-screen">🌱 Garden</button>
-      <button type="button" class="nav-button" data-screen="mini-games-screen">🎮 Mini Games</button>
+    <nav class="main-nav" aria-label="Main navigation">
+      <div class="nav-track">
+        <button type="button" class="nav-button active" data-screen="garden-screen" aria-current="page">
+          <span class="nav-icon">🌱</span>
+          <span class="nav-copy"><strong>Garden</strong><small>Watch time grow</small></span>
+        </button>
+        <button type="button" class="nav-button" data-screen="mini-games-screen" aria-current="false">
+          <span class="nav-icon">🎮</span>
+          <span class="nav-copy"><strong>Mini Games</strong><small>Earn Tickets</small></span>
+        </button>
+      </div>
     </nav>
 
     <section id="garden-screen" class="screen active">
