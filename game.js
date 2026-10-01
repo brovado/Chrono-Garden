@@ -157,6 +157,12 @@ const activeGameEyebrow=document.getElementById("active-game-eyebrow");
 const memoryGame=document.getElementById("memory-game");
 const reactionGame=document.getElementById("reaction-game");
 const match3Game=document.getElementById("match3-game");
+const miniGameResult=document.getElementById("mini-game-result");
+const resultTitle=document.getElementById("result-title");
+const resultMessage=document.getElementById("result-message");
+const resultTickets=document.getElementById("result-tickets");
+let miniGameSession=0;
+let resultReturnTimer=null;
 
 document.querySelectorAll(".game-select").forEach(button=>{
   button.addEventListener("click",()=>openMiniGame(button.dataset.game));
@@ -165,9 +171,15 @@ const closeMiniGameButton=document.getElementById("close-mini-game");
 if(closeMiniGameButton)closeMiniGameButton.addEventListener("click",closeMiniGame);
 
 function openMiniGame(game){
+  miniGameSession++;
+  if(resultReturnTimer)clearTimeout(resultReturnTimer);
+  resultReturnTimer=null;
   activeMiniGame.hidden=false;
-  memoryGame.hidden=game!=="memory";reactionGame.hidden=game!=="reaction";match3Game.hidden=game!=="match3";
-  activeGameTitle.textContent=game==="memory"?"Memory Flip":game==="reaction"?"Reaction Tap":"Match-3 Puzzle";
+  miniGameResult.hidden=true;
+  memoryGame.hidden=game!=="memory";
+  reactionGame.hidden=game!=="reaction";
+  match3Game.hidden=game!=="match3";
+  activeGameTitle.textContent=game==="memory"?"Memory Flip":game==="reaction"?"Whack-a-Mole":"Match-3 Puzzle";
   activeGameEyebrow.textContent=game==="match3"?"GOLD UNLOCK":"AVAILABLE";
   if(game==="memory")startMemoryGame();
   if(game==="reaction")resetReactionGame();
@@ -175,16 +187,38 @@ function openMiniGame(game){
   activeMiniGame.scrollIntoView({behavior:"smooth",block:"start"});
 }
 function closeMiniGame(){
+  miniGameSession++;
+  if(resultReturnTimer)clearTimeout(resultReturnTimer);
+  resultReturnTimer=null;
   activeMiniGame.hidden=true;
-  stopReactionGame();stopMatch3Game();
+  miniGameResult.hidden=true;
+  memoryGame.hidden=true;
+  reactionGame.hidden=true;
+  match3Game.hidden=true;
+  stopReactionGame();stopMatch3Game();stopMemoryGame();
 }
+function showGameResult(title,message,earned){
+  const session=miniGameSession;
+  stopReactionGame();stopMatch3Game();stopMemoryGame();
+  memoryGame.hidden=true;reactionGame.hidden=true;match3Game.hidden=true;
+  resultTitle.textContent=title;
+  resultMessage.textContent=message;
+  resultTickets.textContent=earned;
+  miniGameResult.hidden=false;
+  resultReturnTimer=setTimeout(()=>{
+    if(session!==miniGameSession)return;
+    closeMiniGame();
+  },2200);
+}
+function stopMemoryGame(){if(memoryTimer)clearTimeout(memoryTimer);memoryTimer=null;memoryLocked=true;memoryFirst=null;}
 
 /* --- Memory Flip --- */
 const memorySymbols=["🌹","🌻","🍄","💎"];
-let memoryCards=[],memoryFlips=0,memoryMatches=0,memoryFirst=null,memoryLocked=false,memoryStartedAt=0;
+let memoryCards=[],memoryFlips=0,memoryMatches=0,memoryFirst=null,memoryLocked=false,memoryStartedAt=0,memoryTimer=null;
 function startMemoryGame(){
   const deck=[...memorySymbols,...memorySymbols].sort(()=>Math.random()-.5);
   memoryCards=deck.map((symbol,index)=>({symbol,index,flipped:false,matched:false}));
+  if(memoryTimer)clearTimeout(memoryTimer);
   memoryFlips=0;memoryMatches=0;memoryFirst=null;memoryLocked=false;memoryStartedAt=Date.now();
   renderMemory();
 }
@@ -206,58 +240,123 @@ function flipMemory(index){
   memoryLocked=true;
   const first=memoryFirst;memoryFirst=null;
   if(first.symbol===card.symbol){
-    setTimeout(()=>{first.matched=true;card.matched=true;memoryMatches++;memoryLocked=false;renderMemory();if(memoryMatches===4)endMemoryGame();},350);
+    memoryTimer=setTimeout(()=>{memoryTimer=null;first.matched=true;card.matched=true;memoryMatches++;memoryLocked=false;renderMemory();if(memoryMatches===4)endMemoryGame();},350);
   }else{
-    setTimeout(()=>{first.flipped=false;card.flipped=false;memoryLocked=false;renderMemory();},650);
+    memoryTimer=setTimeout(()=>{memoryTimer=null;first.flipped=false;card.flipped=false;memoryLocked=false;renderMemory();},650);
   }
 }
 function endMemoryGame(){
   const seconds=Math.max(1,Math.floor((Date.now()-memoryStartedAt)/1000));
   const bonus=Math.max(0,30-memoryFlips*2-Math.floor(seconds/5));
   const earned=10+bonus;state.tickets+=earned;saveState();render();
-  toast(`🧠 Memory complete! +${earned} Tickets.`);
+  showGameResult("Memory complete!","You found every pair.",earned);
 }
 
-/* --- Reaction Tap --- */
-const reactionAction=document.getElementById("reaction-action"),reactionStatus=document.getElementById("reaction-status"),reactionRound=document.getElementById("reaction-round"),reactionBest=document.getElementById("reaction-best");
-let reactionRoundValue=0,reactionTimes=[],reactionState="idle",reactionTimer=null,reactionGoAt=0;
+/* --- Whack-a-Mole --- */
+const reactionAction=document.getElementById("reaction-action");
+const reactionStatus=document.getElementById("reaction-status");
+const reactionRound=document.getElementById("reaction-round");
+const reactionBest=document.getElementById("reaction-best");
+const moleBoard=document.getElementById("mole-board");
+let reactionRoundValue=0,reactionHits=0,reactionState="idle",reactionTimer=null,moleTimer=null,moleActiveIndex=-1;
+
 reactionAction.addEventListener("click",handleReactionClick);
+
 function resetReactionGame(){
-  stopReactionGame();reactionRoundValue=0;reactionTimes=[];reactionState="idle";reactionStatus.textContent="Press Start when you're ready.";reactionAction.textContent="START";reactionAction.className="reaction-action";reactionRound.textContent="0 / 10";reactionBest.textContent="—";
+  stopReactionGame();
+  reactionRoundValue=0;reactionHits=0;reactionState="idle";moleActiveIndex=-1;
+  reactionStatus.textContent="Whack the glowing critter as soon as it appears!";
+  reactionAction.textContent="START";
+  reactionRound.textContent="0 / 15";
+  reactionBest.textContent="0";
+  renderMoleBoard();
 }
-function stopReactionGame(){if(reactionTimer)clearTimeout(reactionTimer);reactionTimer=null;reactionState="idle";}
-function handleReactionClick(){
-  if(reactionState==="idle"){startReactionRound();return;}
-  if(reactionState==="waiting"){clearTimeout(reactionTimer);reactionState="idle";reactionStatus.textContent="Too early! Try again.";reactionAction.textContent="NEXT";return;}
-  if(reactionState==="finished"){resetReactionGame();return;}
-  if(reactionState==="ready"){
-    const ms=Date.now()-reactionGoAt;reactionTimes.push(ms);reactionRoundValue++;
-    reactionState="idle";reactionStatus.textContent=`${ms} ms reaction`;
-    reactionAction.textContent=reactionRoundValue>=10?"FINISH":"NEXT";
-    reactionAction.className="reaction-action";
-    reactionRound.textContent=`${reactionRoundValue} / 10`;
-    reactionBest.textContent=`${Math.min(...reactionTimes)} ms`;
-    if(reactionRoundValue>=10)endReactionGame();
-    return;
+function stopReactionGame(){
+  if(reactionTimer)clearTimeout(reactionTimer);
+  if(moleTimer)clearTimeout(moleTimer);
+  reactionTimer=null;moleTimer=null;reactionState="idle";moleActiveIndex=-1;
+}
+function renderMoleBoard(){
+  moleBoard.innerHTML="";
+  for(let i=0;i<9;i++){
+    const button=document.createElement("button");
+    button.type="button";
+    button.className="mole-hole";
+    button.setAttribute("aria-label",i===moleActiveIndex?"Whack the glowing critter":"Empty garden patch");
+    if(i===moleActiveIndex){
+      button.classList.add("active");
+      button.textContent="🐹";
+    }else{
+      button.textContent="🌱";
+    }
+    button.addEventListener("click",()=>whackMole(i));
+    moleBoard.appendChild(button);
   }
 }
-function startReactionRound(){
-  if(reactionRoundValue>=10){resetReactionGame();return;}
-  reactionState="waiting";reactionStatus.textContent="Wait for GO...";reactionAction.textContent="WAIT";reactionAction.className="reaction-action";
-  const delay=700+Math.random()*1800;
-  reactionTimer=setTimeout(()=>{reactionState="ready";reactionGoAt=Date.now();reactionStatus.textContent="GO!";reactionAction.textContent="TAP!";reactionAction.className="reaction-action go";},delay);
+function handleReactionClick(){
+  if(reactionState==="idle"){
+    if(reactionRoundValue>=15){resetReactionGame();return;}
+    startMoleRound();
+    return;
+  }
+  if(reactionState==="finished"){resetReactionGame();return;}
+}
+function startMoleRound(){
+  reactionState="waiting";
+  reactionRoundValue++;
+  reactionRound.textContent=`${reactionRoundValue} / 15`;
+  reactionStatus.textContent="Get ready...";
+  reactionAction.textContent="WATCH";
+  moleActiveIndex=-1;
+  renderMoleBoard();
+  const delay=350+Math.random()*800;
+  reactionTimer=setTimeout(()=>{
+    reactionTimer=null;
+    if(reactionState!=="waiting")return;
+    reactionState="ready";
+    moleActiveIndex=Math.floor(Math.random()*9);
+    reactionStatus.textContent="WHACK!";
+    reactionAction.textContent="NEXT";
+    renderMoleBoard();
+    moleTimer=setTimeout(()=>{
+      if(reactionState!=="ready")return;
+      reactionState="idle";
+      moleActiveIndex=-1;
+      reactionStatus.textContent="Too slow! Press NEXT to keep going.";
+      reactionAction.textContent="NEXT";
+      renderMoleBoard();
+    },1100);
+  },delay);
+}
+function whackMole(index){
+  if(reactionState!=="ready")return;
+  if(index!==moleActiveIndex)return;
+  if(moleTimer)clearTimeout(moleTimer);
+  moleTimer=null;
+  reactionHits++;
+  reactionBest.textContent=String(reactionHits);
+  reactionState="idle";
+  moleActiveIndex=-1;
+  if(reactionRoundValue>=15){
+    endReactionGame();
+    return;
+  }
+  reactionStatus.textContent="Nice hit! Find the next one.";
+  reactionAction.textContent="NEXT";
+  renderMoleBoard();
 }
 function endReactionGame(){
-  const average=Math.round(reactionTimes.reduce((a,b)=>a+b,0)/reactionTimes.length);
-  const earned=Math.max(8,Math.round(35-average/30));state.tickets+=earned;saveState();render();
-  reactionStatus.textContent=`Average: ${average} ms · Earned ${earned} Tickets`;
-  reactionAction.textContent="PLAY AGAIN";reactionAction.className="reaction-action";
+  stopReactionGame();
+  const earned=8+reactionHits*2;
+  state.tickets+=earned;
+  saveState();render();
   reactionState="finished";
+  showGameResult("Whack-a-Mole complete!",`${reactionHits} of 15 critters whacked.`,earned);
 }
 
 /* --- Match-3 --- */
 const matchSymbols=["🔴","🔵","🟢","🟡","🟣","🟠"];
-let matchBoard=[],matchSelected=null,matchScoreValue=0,match3Timer=null,match3Remaining=60,match3Active=false;
+let matchBoard=[],matchSelected=null,matchScoreValue=0,match3Timer=null,matchResolveTimer=null,match3Remaining=60,match3Active=false;
 const match3Board=document.getElementById("match3-board"),match3Time=document.getElementById("match3-time"),match3Score=document.getElementById("match3-score");
 function updateMatch3Card(){
   const unlock=document.getElementById("match3-unlock"),play=document.getElementById("match3-play");
@@ -288,7 +387,11 @@ function startMatch3Game(){
   stopMatch3Game();matchBoard=makeMatchBoard();matchSelected=null;matchScoreValue=0;match3Remaining=60;match3Active=true;renderMatch3();
   match3Timer=setInterval(()=>{match3Remaining--;renderMatch3();if(match3Remaining<=0)endMatch3Game();},1000);
 }
-function stopMatch3Game(){if(match3Timer)clearInterval(match3Timer);match3Timer=null;match3Active=false;}
+function stopMatch3Game(){
+  if(match3Timer)clearInterval(match3Timer);
+  if(matchResolveTimer)clearTimeout(matchResolveTimer);
+  match3Timer=null;matchResolveTimer=null;match3Active=false;
+}
 function renderMatch3(){
   match3Time.textContent=match3Remaining;match3Score.textContent=matchScoreValue;match3Board.innerHTML="";
   matchBoard.forEach((row,r)=>row.forEach((value,c)=>{
@@ -337,11 +440,11 @@ function resolveMatches(){
     while(remaining.length<6)remaining.unshift(Math.floor(Math.random()*matchSymbols.length));
     for(let r=0;r<6;r++)matchBoard[r][c]=remaining[r];
   }
-  renderMatch3();setTimeout(resolveMatches,100);
+  renderMatch3();matchResolveTimer=setTimeout(()=>{matchResolveTimer=null;resolveMatches();},100);
 }
 function endMatch3Game(){
   if(!match3Active)return;
   stopMatch3Game();const earned=Math.max(5,Math.floor(matchScoreValue/4));state.tickets+=earned;saveState();render();
-  toast(`🧩 Match-3 complete! +${earned} Tickets.`);
+  showGameResult("Match-3 complete!","Final score: "+matchScoreValue,earned);
 }
 render();
