@@ -152,6 +152,7 @@ document.querySelectorAll("[data-screen]").forEach(button=>{
 
 /* --- Mini-game selection --- */
 const activeMiniGame=document.getElementById("active-mini-game");
+const miniGameSelection=document.querySelector(".mini-game-selection");
 const activeGameTitle=document.getElementById("active-game-title");
 const activeGameEyebrow=document.getElementById("active-game-eyebrow");
 const memoryGame=document.getElementById("memory-game");
@@ -175,6 +176,7 @@ function openMiniGame(game){
   if(resultReturnTimer)clearTimeout(resultReturnTimer);
   resultReturnTimer=null;
   activeMiniGame.hidden=false;
+  miniGameSelection.hidden=true;
   miniGameResult.hidden=true;
   memoryGame.hidden=game!=="memory";
   reactionGame.hidden=game!=="reaction";
@@ -191,6 +193,7 @@ function closeMiniGame(){
   if(resultReturnTimer)clearTimeout(resultReturnTimer);
   resultReturnTimer=null;
   activeMiniGame.hidden=true;
+  miniGameSelection.hidden=false;
   miniGameResult.hidden=true;
   memoryGame.hidden=true;
   reactionGame.hidden=true;
