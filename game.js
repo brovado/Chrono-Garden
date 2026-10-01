@@ -129,13 +129,24 @@ function toast(message,error=false){
 }
 
 /* --- Screen navigation --- */
+function showMainScreen(screenId){
+  document.querySelectorAll(".screen").forEach(screen=>{
+    screen.hidden=screen.id!==screenId;
+    screen.classList.toggle("active",screen.id===screenId);
+  });
+  document.querySelectorAll(".nav-button").forEach(nav=>{
+    const isActive=nav.dataset.screen===screenId;
+    nav.classList.toggle("active",isActive);
+    nav.setAttribute("aria-current",isActive?"page":"false");
+  });
+  screenTitle.textContent=screenId==="garden-screen"?"The Garden":"Mini Games";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
 document.querySelectorAll("[data-screen]").forEach(button=>{
   button.addEventListener("click",()=>{
-    document.querySelectorAll(".screen").forEach(screen=>screen.classList.remove("active"));
-    document.querySelectorAll(".nav-button").forEach(nav=>nav.classList.remove("active"));
-    document.getElementById(button.dataset.screen).classList.add("active");
-    button.classList.add("active");
-    screenTitle.textContent=button.dataset.screen==="garden-screen"?"The Garden":"Mini Games";
+    closeMiniGame();
+    showMainScreen(button.dataset.screen);
   });
 });
 
