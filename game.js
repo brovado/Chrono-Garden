@@ -161,7 +161,8 @@ const match3Game=document.getElementById("match3-game");
 document.querySelectorAll(".game-select").forEach(button=>{
   button.addEventListener("click",()=>openMiniGame(button.dataset.game));
 });
-document.getElementById("close-mini-game").addEventListener("click",closeMiniGame);
+const closeMiniGameButton=document.getElementById("close-mini-game");
+if(closeMiniGameButton)closeMiniGameButton.addEventListener("click",closeMiniGame);
 
 function openMiniGame(game){
   activeMiniGame.hidden=false;
@@ -228,6 +229,7 @@ function stopReactionGame(){if(reactionTimer)clearTimeout(reactionTimer);reactio
 function handleReactionClick(){
   if(reactionState==="idle"){startReactionRound();return;}
   if(reactionState==="waiting"){clearTimeout(reactionTimer);reactionState="idle";reactionStatus.textContent="Too early! Try again.";reactionAction.textContent="NEXT";return;}
+  if(reactionState==="finished"){resetReactionGame();return;}
   if(reactionState==="ready"){
     const ms=Date.now()-reactionGoAt;reactionTimes.push(ms);reactionRoundValue++;
     reactionState="idle";reactionStatus.textContent=`${ms} ms reaction`;
@@ -250,7 +252,7 @@ function endReactionGame(){
   const earned=Math.max(8,Math.round(35-average/30));state.tickets+=earned;saveState();render();
   reactionStatus.textContent=`Average: ${average} ms · Earned ${earned} Tickets`;
   reactionAction.textContent="PLAY AGAIN";reactionAction.className="reaction-action";
-  reactionState="idle";reactionAction.onclick=()=>resetReactionGame();
+  reactionState="finished";
 }
 
 /* --- Match-3 --- */
@@ -261,12 +263,14 @@ function updateMatch3Card(){
   const unlock=document.getElementById("match3-unlock"),play=document.getElementById("match3-play");
   if(state.match3Unlocked){unlock.hidden=true;play.hidden=false;}else{unlock.hidden=false;play.hidden=true;}
 }
-document.getElementById("match3-unlock").addEventListener("click",()=>{
+const match3UnlockButton=document.getElementById("match3-unlock");
+if(match3UnlockButton)match3UnlockButton.addEventListener("click",()=>{
   if(state.match3Unlocked)return;
   if(state.gold<250){toast("Not enough Gold.",true);return;}
   state.gold-=250;state.match3Unlocked=true;saveState();updateMatch3Card();render();toast("🧩 Match-3 unlocked.");
 });
-document.getElementById("match3-play").addEventListener("click",()=>openMiniGame("match3"));
+const match3PlayButton=document.getElementById("match3-play");
+if(match3PlayButton)match3PlayButton.addEventListener("click",()=>openMiniGame("match3"));
 function makeMatchBoard(){
   const board=[];
   for(let r=0;r<6;r++){
